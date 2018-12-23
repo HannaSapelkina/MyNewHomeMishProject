@@ -5,6 +5,8 @@ import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.Random;
+
 public class CreateAccountTests extends TestBase {
 
     @Test
@@ -17,7 +19,7 @@ public class CreateAccountTests extends TestBase {
 
         WebElement mailField = driver.findElement(By.xpath("//input[@formcontrolname='email']"));
         mailField.click();
-        mailField.sendKeys("NewUser32145@gmail.com");
+        mailField.sendKeys(getSaltString()+"@gmail.com");
 
 
         WebElement passwordField = driver.findElement(By.xpath("//input[@formcontrolname='password']"));
@@ -104,5 +106,18 @@ public class CreateAccountTests extends TestBase {
 
         //WebElement menu_icon = driver.findElement(By.xpath("//mat-icon[@class='but mat-icon material-icons']"));
         //Assert.assertTrue(menu_icon.getAttribute("mattooltip").equals("Menu"));
+    }
+
+    private String getSaltString() {
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < 10) { // length of the random string.
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        return saltStr;
+
     }
 }
