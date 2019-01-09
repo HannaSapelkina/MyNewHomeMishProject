@@ -1,123 +1,76 @@
 package Tests;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import Pages.*;
+import org.openqa.selenium.support.PageFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.Random;
-
 public class CreateAccountTests extends TestBase {
+    private HomePageHelper homePage;
+    private CreateAccountPageHelper accountCreatePage;
+    private MenuPageHelper menuPage;
+    private ProfilePageHelper profilePage;
+    private LoginPageHelper loginPage;
+
+    @BeforeMethod
+    public void initPage() {
+        homePage = PageFactory.initElements(driver, HomePageHelper.class);
+        accountCreatePage = PageFactory.initElements(driver, CreateAccountPageHelper.class);
+        menuPage = PageFactory.initElements(driver, MenuPageHelper.class);
+        profilePage = PageFactory.initElements(driver, ProfilePageHelper.class);
+        loginPage = PageFactory.initElements(driver,LoginPageHelper.class);
+        homePage.waitUntilPageIsLoaded();
+    }
 
     @Test
     public void CreateNewAccountTest(){
+        homePage.pressCreateAccountButton();
+        accountCreatePage.waitUntilPageIsLoaded();
+        accountCreatePage.enterValueToFieldEmailRandom();
+        accountCreatePage.enterValueToFieldPassword("example");
+        accountCreatePage.enterValueToFieldPasswordRep("example");
+        accountCreatePage.pressRegistrationButton();
+        profilePage.waitUntilPageIsLoaded();
+        Assert.assertEquals(profilePage.getHeader(),"Registration");
 
-        waitUntilElementIsLoaded(driver, By.xpath("//span[contains(text(),'Login')]"), 45);
-
-        WebElement createAccount = driver.findElement(By.xpath("//span[contains(text(),'Create Account')]"));
-        createAccount.click();
-
-        WebElement mailField = driver.findElement(By.xpath("//input[@formcontrolname='email']"));
-        mailField.click();
-        mailField.sendKeys(getSaltString()+"@gmail.com");
-
-
-        WebElement passwordField = driver.findElement(By.xpath("//input[@formcontrolname='password']"));
-        passwordField.click();
-        passwordField.sendKeys("example");
-
-        WebElement repPasswordField = driver.findElement(By.xpath("//input[@formcontrolname='passwordRep']"));
-        repPasswordField.click();
-        repPasswordField.sendKeys("example");
-
-        WebElement registrationButton = driver.findElement(By.xpath("//span[contains(text(),'Registration')]"));
-        registrationButton.click();
-        waitUntilElementIsLoaded(driver, By.xpath("//mat-icon[@class='but mat-icon material-icons']"), 45);
-
-        //WebElement cancelButton = driver.findElement(By.xpath("//button[@type='button']//span[contains(text(),'Cancel')]/.."));
-        //cancelButton.click();
-        // waitUntilElementIsLoaded(driver, By.xpath("//mat-icon[@mattooltip='Menu'']"), 45);
-
-        WebElement menuButton = driver.findElement(By.xpath("//mat-icon[@mattooltip='Menu']"));
-        menuButton.click();
-
-        WebElement logOutMenu = driver.findElement(By.xpath("//span[@class='marginLeft']"));
-        logOutMenu.click();
-       // waitUntilElementIsLoaded(driver, By.xpath("//span[contains(text(),'Login')]"), 45);
-        waitUntilElementIsLoaded(driver, By.className("mat-stroked-button"), 45);
-        WebElement goToEventsButton = driver.findElement(By.className("mat-stroked-button"));
-        Assert.assertTrue(goToEventsButton.getText().equals("Go to Event list"));
+        profilePage.pressMenuIcon();
+        menuPage.waitUntilPageIsLoaded();
+        menuPage.pressLogOutButton();
+        homePage.waitUntilPageIsLoaded();
+        Assert.assertEquals("Go to Event list",homePage.getGoToEventButtonName());
     }
 
     @Test
     public void CreateNewAccountAndLoginTest()  {
+        String email = PageBase.getSaltString() + "@gmail.com";
+        homePage.pressCreateAccountButton();
+        accountCreatePage.waitUntilPageIsLoaded();
+        accountCreatePage.enterValueToFieldEmail(email);
+        accountCreatePage.enterValueToFieldPassword("example");
+        accountCreatePage.enterValueToFieldPasswordRep("example");
+        accountCreatePage.pressRegistrationButton();
+        profilePage.waitUntilPageIsLoaded();
+        Assert.assertEquals(profilePage.getHeader(), "Registration");
 
-        waitUntilElementIsLoaded(driver, By.xpath("//span[contains(text(),'Login')]"), 45);
+        profilePage.pressMenuIcon();
+        menuPage.waitUntilPageIsLoaded();
+        menuPage.pressLogOutButton();
+        homePage.waitUntilPageIsLoaded();
+        Assert.assertEquals("Go to Event list",homePage.getGoToEventButtonName());
 
-        WebElement createAccount = driver.findElement(By.xpath("//span[contains(text(),'Create Account')]"));
-        createAccount.click();
-
-        WebElement mailField = driver.findElement(By.xpath("//input[@formcontrolname='email']"));
-        mailField.click();
-        mailField.sendKeys("Ann8@gmail.com");
-
-
-        WebElement passwordField = driver.findElement(By.xpath("//input[@formcontrolname='password']"));
-        passwordField.click();
-        passwordField.sendKeys("example");
-
-        WebElement repPasswordField = driver.findElement(By.xpath("//input[@formcontrolname='passwordRep']"));
-        repPasswordField.click();
-        repPasswordField.sendKeys("example");
-
-        WebElement registrationButton = driver.findElement(By.xpath("//span[contains(text(),'Registration')]"));
-        registrationButton.click();
-        waitUntilElementIsLoaded(driver, By.xpath("//span[contains(text(),'Cancel')]"), 45);
-
-        WebElement cancelButton = driver.findElement(By.xpath("//button[@type='button']//span[contains(text(),'Cancel')]/.."));
-        cancelButton.click();
-        waitUntilElementIsLoaded(driver, By.xpath("//mat-icon[@class='but mat-icon material-icons']"), 45);
-
-        WebElement menuButton = driver.findElement(By.xpath("//mat-icon[@mattooltip='Menu']"));
-        //menuButton = driver.findElement(By.cssSelector('mat-icon.but.mat-icon'));
-        menuButton.click();
-
-        WebElement logOutMenu = driver.findElement(By.xpath("//span[@class='marginLeft']"));
-        logOutMenu.click();
-        waitUntilElementIsLoaded(driver, By.xpath("//span[contains(text(),'Login')]"), 45);
 
         //----------Login created user----------
 
-        WebElement login = driver.findElement(By.xpath("//span[contains(text(),'Login')]"));
-        login.click();
 
-        WebElement emailReg = driver.findElement(By.xpath("//input[@formcontrolname='email']"));
-        emailReg.click();
-        emailReg.sendKeys("Ann8@gmail.com");
-
-
-        WebElement passReg =  driver.findElement(By.xpath("//input[@formcontrolname='password']"));
-        passReg.click();
-        passReg.sendKeys("example");
-
-        WebElement log_In = driver.findElement(By.xpath("//span[contains(text(),'Log in')]"));
-        waitUntilElementIsLoaded(driver, By.xpath("//span[contains(text(),'Log in')]"), 45);
-        log_In.click();
-
-        //WebElement menu_icon = driver.findElement(By.xpath("//mat-icon[@class='but mat-icon material-icons']"));
-        //Assert.assertTrue(menu_icon.getAttribute("mattooltip").equals("Menu"));
+        homePage.pressLoginButton();
+        loginPage.waitUntilPageIsLoaded();
+        loginPage.enterValueToEmailField(email);
+        loginPage.enterValueToPasswordField("example");
+        loginPage.pressLoginButton();
+        profilePage.waitUntilPageIsLoaded();
+        Assert.assertEquals(profilePage.getHeader(), "Registration");
     }
 
-    private String getSaltString() {
-        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-        StringBuilder salt = new StringBuilder();
-        Random rnd = new Random();
-        while (salt.length() < 10) { // length of the random string.
-            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
-            salt.append(SALTCHARS.charAt(index));
-        }
-        String saltStr = salt.toString();
-        return saltStr;
 
-    }
 }

@@ -1,61 +1,50 @@
 package Tests;
 
+import Pages.EventsAuthPageHelper;
+import Pages.HomePageHelper;
+import Pages.LoginPageHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.PageFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class LoginPageTests extends TestBase {
 
+    HomePageHelper homePage;
+    LoginPageHelper loginPage;
+    EventsAuthPageHelper eventsAuthPage;
+
+    @BeforeMethod
+    public void initPage() {
+        homePage = PageFactory.initElements(driver, HomePageHelper.class);
+        loginPage = PageFactory.initElements(driver,LoginPageHelper.class);
+        eventsAuthPage = PageFactory.initElements(driver,EventsAuthPageHelper.class);
+    }
     @Test
     public void loginPositive() {
 
-        waitUntilElementIsLoaded(driver, By.xpath("//span[contains(text(),'Login')]"), 45);
-
-        WebElement login = driver.findElement(By.xpath("//span[contains(text(),'Login')]"));
-        login.click();
-        waitUntilElementIsLoaded(driver, By.xpath("//span[contains(text(),'Cancel')]"), 20);
-
-        WebElement email_field = driver.findElement(By.xpath("//input[@formcontrolname='email']"));
-        WebElement password_field = driver.findElement(By.xpath("//input[@formcontrolname='password']"));
-
-        email_field.click();
-        email_field.sendKeys("mishUser13@gmail.com");
-        password_field.click();
-        password_field.sendKeys("example");
-
-        WebElement login_button=driver.findElement(By.xpath("//span[contains(text(),'Log in')]"));
-        waitUntilElementIsLoaded(driver, By.xpath("//span[contains(text(),'Log in')]"), 45);
-        login_button.click();
-
-        waitUntilElementIsLoaded(driver, By.xpath("//mat-icon[@class='but mat-icon material-icons']"), 45);
-
-        WebElement menu_icon = driver.findElement(By.xpath("//mat-icon[@class='but mat-icon material-icons']"));
-        Assert.assertTrue(menu_icon.getAttribute("mattooltip").equals("Menu"));
+        homePage.waitUntilPageIsLoaded();
+        homePage.pressLoginButton();
+        loginPage.waitUntilPageIsLoaded();
+        loginPage.enterValueToEmailField("mishUser1@gmail.com");
+        loginPage.enterValueToPasswordField("example");
+        loginPage.pressLoginButton();
+        eventsAuthPage.waitUntilPageIsLoaded();
+        Assert.assertEquals("Menu",eventsAuthPage.getTooltipIconMenu());
+        Assert.assertTrue(eventsAuthPage.isHeaderPageCorrect("Find event"));
     }
 
     @Test
     public void loginNegative (){
-        waitUntilElementIsLoaded(driver, By.xpath("//span[contains(text(),'Login')]"), 45);
-
-        WebElement login = driver.findElement(By
-                .xpath("//span[contains(text(),'Login')]"));
-        login.click();
-        waitUntilElementIsLoaded(driver, By.xpath("//span[contains(text(),'Cancel')]"), 20);
-
-        WebElement email_field = driver.findElement(By.xpath("//input[@formcontrolname='email']"));
-        WebElement password_field = driver.findElement(By.xpath("//input[@formcontrolname='password']"));
-
-        email_field.click();
-        email_field.sendKeys("mishUser1555553@gmail.com");
-        password_field.click();
-        password_field.sendKeys("example");
-        WebElement login_button=driver.findElement(By.xpath("//span[contains(text(),'Log in')]"));
-        waitUntilElementIsLoaded(driver, By.xpath("//span[contains(text(),'Log in')]"), 45);
-        login_button.click();
-
-        waitUntilElementIsLoaded(driver, By.xpath("//div[@class='alert alert-danger ng-star-inserted']"), 45);
-        WebElement alertTest = driver.findElement(By.xpath("//div[@class='alert alert-danger ng-star-inserted']"));
-        Assert.assertTrue(alertTest.getText().equals("Wrong authorization, login or password"));
+        homePage.waitUntilPageIsLoaded();
+        homePage.pressLoginButton();
+        loginPage.waitUntilPageIsLoaded();
+        loginPage.enterValueToEmailField("mishUser15456@gmail.com");
+        loginPage.enterValueToPasswordField("example");
+        loginPage.pressLoginButton();
+        Assert.assertEquals(loginPage.getAlertText(),"Wrong authorization, login or password");
+        Assert.assertTrue(loginPage.isAlertTextCorrect("Wrong authorization, login or password"));
     }
 }
